@@ -1,27 +1,31 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import './App.css';
+
+import DefaultLayout from './components/layouts/DefaultLayout';
+import NewMatch from './components/pages/NewMatchPage';
+import WelcomePage from './components/pages/WelcomePage';
+import NotFoundPage from './components/pages/NotFoundPage';
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
+      <Router>
+        <DefaultLayout>
+          {this.renderRoutes()}
+        </DefaultLayout>
+      </Router>
+    )
+  }
+
+  renderRoutes() {
+    return (
+      <Switch>
+        <Route path="/" exact component={WelcomePage} />
+        <Route path="/new-match" component={NewMatch} />
+        <Route component={NotFoundPage} />
+      </Switch>
+    )
   }
 }
 
