@@ -8,6 +8,8 @@ import Grid from '@material-ui/core/Grid';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
+import { AppContext } from '../../AppContext';
+import { withRouter } from 'react-router-dom';
 
 const styles = theme => ({
   '@global': {
@@ -76,24 +78,23 @@ const footers = [
   },
 ];
 
-function Pricing(props) {
-  const { classes } = props;
+function DefaultLayout(props) {
+  const { classes, history } = props;
 
   return (
     <React.Fragment>
       <CssBaseline />
       <AppBar position="static" color="default" className={classes.appBar}>
-        <Toolbar>
-          <Typography variant="h6" color="inherit" noWrap className={classes.toolbarTitle}>
-            Futbol Match
-          </Typography>
-          <Button>Features</Button>
-          <Button>Enterprise</Button>
-          <Button>Support</Button>
-          <Button color="primary" variant="outlined">
-            Login
-          </Button>
-        </Toolbar>
+        <AppContext.Consumer>
+          {({isLoggedIn, logoutUser}) => (
+            <Toolbar>
+              <Typography variant="h6" color="inherit" noWrap className={classes.toolbarTitle}>
+                <Button href="/">Futbol Match</Button>
+              </Typography>
+              {isLoggedIn ? <LogoutButton logoutUser={logoutUser} /> : <LoginButton history={history} />}
+          </Toolbar>
+          )}
+        </AppContext.Consumer>
       </AppBar>
       <main className={classes.layout}>
         <div className={classes.heroContent}>
@@ -122,8 +123,20 @@ function Pricing(props) {
   );
 }
 
-Pricing.propTypes = {
+const LoginButton = ({ history }) => (
+  <Button color="primary" variant="outlined" onClick={() => history.push('/login')}>
+    Iniciar sesión
+  </Button>
+)
+
+const LogoutButton = ({ logoutUser }) => (
+  <Button color="primary" variant="outlined" onClick={logoutUser}>
+    Cerrar sesión
+  </Button>
+)
+
+DefaultLayout.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Pricing);
+export default withRouter(withStyles(styles)(DefaultLayout));

@@ -1,122 +1,108 @@
 import React from 'react';
 import Field2D from '../containers/Field2D';
 import soccerFieldUrl from '../../assets/soccer-field.png';
-import tshirtBlueImgUrl from '../../assets/tshirt-blue.png';
+import { FormControl, Select, MenuItem, InputLabel, Typography, Grid, FormLabel, RadioGroup, FormControlLabel, Radio, Button } from '@material-ui/core';
+import DateFnsUtils from '@date-io/date-fns';
+import { MuiPickersUtilsProvider, TimePicker, DatePicker } from 'material-ui-pickers';
+import esLocale from 'date-fns/locale/es'
+import { createTeam } from '../../libs/teamFactory';
 
-const homeTeam = {
-  id: 1,
-  name: 'Mi equipo',
-  playerPositionById: [
-    [1],
-    [2, 3, 4, 5],
-    [6, 7],
-    [8, 9, 10],
-    [11]
-  ],
-  players: [
-    {
-      id: 1,
-      name: 'Player 1',
-      tShirtImgUrl: tshirtBlueImgUrl,
-      tShirtNr: '1',
-      faceImgUrl: tshirtBlueImgUrl
-    },
-    {
-      id: 2,
-      name: 'Player 2',
-      tShirtImgUrl: tshirtBlueImgUrl,
-      tShirtNr: '2',
-      faceImgUrl: tshirtBlueImgUrl
-    },
-    {
-      id: 3,
-      name: 'Player 3',
-      tShirtImgUrl: tshirtBlueImgUrl,
-      tShirtNr: '3',
-      faceImgUrl: tshirtBlueImgUrl
-    },
-    {
-      id: 4,
-      name: 'Player 4',
-      tShirtImgUrl: tshirtBlueImgUrl,
-      tShirtNr: '4',
-      faceImgUrl: tshirtBlueImgUrl
-    },
-    {
-      id: 5,
-      name: 'Player 5',
-      tShirtImgUrl: tshirtBlueImgUrl,
-      tShirtNr: '5',
-      faceImgUrl: tshirtBlueImgUrl
-    },
-    {
-      id: 6,
-      name: 'Player 6',
-      tShirtImgUrl: tshirtBlueImgUrl,
-      tShirtNr: '6',
-      faceImgUrl: tshirtBlueImgUrl
-    },
-    {
-      id: 7,
-      name: 'Player 7',
-      tShirtImgUrl: tshirtBlueImgUrl,
-      tShirtNr: '7',
-      faceImgUrl: tshirtBlueImgUrl
-    },
-    {
-      id: 8,
-      name: 'Player 8',
-      tShirtImgUrl: tshirtBlueImgUrl,
-      tShirtNr: '8',
-      faceImgUrl: tshirtBlueImgUrl
-    },
-    {
-      id: 9,
-      name: 'Player 9',
-      tShirtImgUrl: tshirtBlueImgUrl,
-      tShirtNr: '9',
-      faceImgUrl: tshirtBlueImgUrl
-    },
-    {
-      id: 10,
-      name: 'Player 10',
-      tShirtImgUrl: tshirtBlueImgUrl,
-      tShirtNr: '10',
-      faceImgUrl: tshirtBlueImgUrl
-    },
-    {
-      id: 11,
-      name: 'Player 11',
-      tShirtImgUrl: tshirtBlueImgUrl,
-      tShirtNr: '11',
-      faceImgUrl: tshirtBlueImgUrl
-    }
-  ]
-};
-const awayTeam = {
-  id: 2,
-  name: 'Equipo rival',
-  playerPositionById: [],
-  players: []
-}
+const TEAM_SIZES = [5, 6, 7, 11];
+const FIELD_CONFIG = { width: 600, height: 390, textureUrl: soccerFieldUrl };
 
 export default class NewMatch extends React.Component {
 
-  state = { singleTeam: true, teamSize: 7, openMatch: true };
-
-  fieldConfig = { width: 600, height: 390, textureUrl: soccerFieldUrl };
+  state = { singleTeam: true, teamSize: 7, publicMatch: true, date: new Date() }; 
 
   render() {
     return (
-      <div style={{height: '500px', margin: '0 auto'}}>
-        <Field2D
-          field={this.fieldConfig}
-          onPlayerClick={() => alert('jaja')}
-          homeTeam={homeTeam}
-          awayTeam={homeTeam}
-          shouldUpdate={true} />
-      </div>
+      <React.Fragment>
+        {this.renderForm()}
+        {this.renderSoccerField()}
+        <Button fullWidth variant="contained" color="primary">crear convocatoria</Button>
+      </React.Fragment>
     );
+  }
+
+  renderForm() {
+    return (
+      <form autoComplete="false">
+        <Typography variant="h6" gutterBottom>
+          Nueva convocatoria
+        </Typography>
+        <Grid container spacing={24}>
+          <Grid item xs={12}>
+            <FormControl fullWidth>
+              <InputLabel htmlFor="team-size">Tamaño de equipo</InputLabel>
+              <Select
+                value={this.state.teamSize}
+                onChange={event => this.setState({ teamSize: event.target.value })}
+                inputProps={{ name: 'team-size', id: 'team-size' }}
+              >
+                {TEAM_SIZES.map(size => <MenuItem key={size} value={size}>{size}</MenuItem>)}
+              </Select>
+            </FormControl>
+
+            <FormControl component="fieldset">
+              <FormLabel> Equipos en el partido</FormLabel>
+              <RadioGroup
+                name="match-type"
+                value={this.state.singleTeam ? 'single' : 'multiple'}
+                onChange={event => this.setState({ singleTeam: event.target.value === 'single' })}
+              >
+                <FormControlLabel value="single" control={<Radio />} label="convocatoria con unico equipo" />
+                <FormControlLabel value="multiple" control={<Radio />} label="convocatoria con dos equpos (equipo local y visitante)" />
+              </RadioGroup>
+            </FormControl>
+
+            <FormControl component="fieldset">
+              <FormLabel>Tipo de convocatoria</FormLabel>
+              <RadioGroup
+                value={this.state.publicMatch ? 'public' : 'private'}
+                onChange={event => this.setState({ publicMatch: event.target.value === 'public' })}
+              >
+                <FormControlLabel
+                  value="public"
+                  control={<Radio />}
+                  label="convocatoria publica: cualquier persona puede participar." />
+                <FormControlLabel
+                  value="private"
+                  control={<Radio />}
+                  label="convocatoria privada: solo las personas que invites pueden participar." />
+              </RadioGroup>
+            </FormControl>
+
+            <FormControl>
+            <FormLabel> Fecha y hora</FormLabel>
+              <MuiPickersUtilsProvider utils={DateFnsUtils} locale={esLocale}>
+                <Grid container justify="space-around">
+                  <DatePicker
+                    margin="normal"
+                    value={this.state.date}
+                    onChange={date => this.setState({ date })}
+                  />
+                  <TimePicker
+                    margin="normal"
+                    value={this.state.date}
+                    onChange={date => this.setState({ date })}
+                  />
+                </Grid>
+              </MuiPickersUtilsProvider>
+            </FormControl>
+          </Grid>
+        </Grid>
+      </form>
+    )
+  }
+
+  renderSoccerField() {
+    const { teamSize, singleTeam } = this.state;
+    return (
+      <Field2D
+          field={FIELD_CONFIG}
+          homeTeam={createTeam(teamSize, true)}
+          awayTeam={createTeam(singleTeam ? 0 : teamSize, false)} />
+    )
   }
 
 }

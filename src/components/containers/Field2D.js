@@ -1,47 +1,39 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import * as d3 from 'd3';
 require('./field2D.scss');
 
 export default class Field2D extends React.Component {
-
-    state = {
-        windowWidth: window.innerWidth
+    static defaultProps = {
+        onPlayerClick: () => {}
     }
 
-    handleResize = (e) => {
-        this.setState({
-            windowWidth: window.innerWidth
-        });
-    }
+    svgRef = React.createRef();
 
-    componentDidMount = () => {
-        window.addEventListener('resize', this.handleResize);
-        this.draw();
-    }
+    componentDidMount() { this.draw(); }
+
+    componentDidUpdate() { this.draw(); }
 
     render() {
-        let field = <img
-                id="SSUI-Field2D-FieldTexture"
-                alt="campo de futbol"
-                width={this.props.field.width}
-                height={this.props.field.hright}
-                style={this.props.perspective === 'true' ? {transform: 'perspective(' + this.props.field.width + 'px) rotateX(45deg)', position: 'absolute'} : {position: 'absolute'}}
-                src={this.props.field.textureUrl} />
+        const { field, perspective } = this.props;
 
         return (
-            <div id="SSUI-Field2D" style={{width: this.props.field.width + 'px', height:'auto', left:'0px', position:'relative'}}>
-                {field}
+            <div style={{width: `${field.width}px`, height: `${field.height}px`, left:'0px', position:'relative'}}>
+                <img
+                alt="campo de futbol"
+                width={field.width}
+                height={field.height}
+                style={perspective === 'true' ? {transform: `perspective(${field.width}px) rotateX(45deg)`, position: 'absolute'} : {position: 'absolute'}}
+                src={field.textureUrl} />
+                <svg ref={this.svgRef}></svg>
             </div>
         );
     }
 
     draw = () => {
-        let svg = d3.select(ReactDOM.findDOMNode(this)).append('svg');
-        svg.attr({
-            viewBox: '0 0 ' +  this.props.field.width + ' ' + this.props.field.height,
-            id: 'svg-names'
-        });
+        const { field } = this.props;
+        const svg = d3.select(this.svgRef.current);
+        svg.selectAll("*").remove() 
+        svg.attr({ viewBox: `0 0 ${field.width} ${field.height}`, id: 'svg-names' });
 
         this.drawShadowFilter(svg);
         this.drawHomePlayers(svg);
