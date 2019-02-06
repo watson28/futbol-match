@@ -10,10 +10,15 @@ export default args => {
       render={props =>
         <AppContext.Consumer>
           {({ isLoggedIn }) => (
-            !isLoggedIn ? <Component {...props} /> : <Redirect to={{ pathname: '/' }} />
+            !isLoggedIn ? <Component {...props} /> : <Redirect to={{ pathname: getRedirectionPath() }} />
           )}
         </AppContext.Consumer>
       }
     />
   )
+}
+
+const getRedirectionPath = () => {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('afterLogin') ||  '/';
 }

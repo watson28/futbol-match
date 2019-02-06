@@ -1,6 +1,5 @@
 import React from 'react';
 import Field2D from '../containers/Field2D';
-import soccerFieldUrl from '../../assets/soccer-field.png';
 import { FormControl, Select, MenuItem, InputLabel, Typography, Grid, FormLabel, RadioGroup, FormControlLabel, Radio, Button } from '@material-ui/core';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, TimePicker, DatePicker } from 'material-ui-pickers';
@@ -8,9 +7,9 @@ import esLocale from 'date-fns/locale/es'
 import { createTeam } from '../../libs/teamFactory';
 
 const TEAM_SIZES = [5, 6, 7, 11];
-const FIELD_CONFIG = { width: 600, height: 390, textureUrl: soccerFieldUrl };
 
-export default class NewMatch extends React.Component {
+// TODO: convert this to a functional component
+export default class CreateMatchForm extends React.Component {
 
   state = { singleTeam: true, teamSize: 7, publicMatch: true, date: new Date() }; 
 
@@ -19,7 +18,11 @@ export default class NewMatch extends React.Component {
       <React.Fragment>
         {this.renderForm()}
         {this.renderSoccerField()}
-        <Button fullWidth variant="contained" color="primary">crear convocatoria</Button>
+        <Button
+          fullWidth
+            variant="contained"
+            color="primary"
+            onClick={() => this.props.onSubmit(this.state)}>crear convocatoria</Button>
       </React.Fragment>
     );
   }
@@ -99,9 +102,8 @@ export default class NewMatch extends React.Component {
     const { teamSize, singleTeam } = this.state;
     return (
       <Field2D
-          field={FIELD_CONFIG}
           homeTeam={createTeam(teamSize, true)}
-          awayTeam={createTeam(singleTeam ? 0 : teamSize, false)} />
+          awayTeam={singleTeam ? null : createTeam(teamSize)} />
     )
   }
 

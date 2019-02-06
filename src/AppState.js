@@ -1,8 +1,9 @@
 import React from 'react';
 import { AppContext } from './AppContext';
 import firebase from "firebase/app";
+import { withRouter } from 'react-router-dom';
 
-export default class AppState extends React.Component {
+class AppState extends React.Component {
   state = { user: null };
 
   componentDidMount() {
@@ -36,3 +37,5 @@ export default class AppState extends React.Component {
     firebase.auth().signOut();
   }
 }
+
+export default withRouter(AppState);

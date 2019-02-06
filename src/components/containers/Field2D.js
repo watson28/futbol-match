@@ -1,10 +1,17 @@
 import React from 'react';
 import * as d3 from 'd3';
+import soccerFieldUrl from '../../assets/soccer-field.png';
+import tshirtBlueImgUrl from '../../assets/tshirt-blue.png';
+import tshirtBlueDarkImgUrl from '../../assets/tshirt-blue-dark.png';
+import tshirtRedImgUrl from '../../assets/tshirt-red.png';
+import tshirtRedDarkImgUrl from '../../assets/tshirt-red-dark.png';
+
 require('./field2D.scss');
 
 export default class Field2D extends React.Component {
     static defaultProps = {
-        onPlayerClick: () => {}
+        onPlayerClick: () => {},
+        field: { width: 600, height: 390, textureUrl: soccerFieldUrl }
     }
 
     svgRef = React.createRef();
@@ -30,14 +37,14 @@ export default class Field2D extends React.Component {
     }
 
     draw = () => {
-        const { field } = this.props;
+        const { field, homeTeam, awayTeam } = this.props;
         const svg = d3.select(this.svgRef.current);
         svg.selectAll("*").remove() 
         svg.attr({ viewBox: `0 0 ${field.width} ${field.height}`, id: 'svg-names' });
 
         this.drawShadowFilter(svg);
-        this.drawHomePlayers(svg);
-        this.drawAwaysPlayers(svg);
+        if (homeTeam) this.drawHomePlayers(svg, homeTeam);
+        if (awayTeam) this.drawAwaysPlayers(svg, awayTeam);
     }
 
     drawShadowFilter(svg) {
@@ -60,25 +67,29 @@ export default class Field2D extends React.Component {
             .attr("in", "SourceGraphic");
     }
 
-    drawHomePlayers(svg) {
+    drawHomePlayers(svg, homeTeam) {
         const { homePlayerXCoord, homePlayerYCoord } = this.getHomePlayerCoordFns(svg);
-        const { playerPositionById, players } = this.props.homeTeam;
+        const { playerPositionById, players } = homeTeam;
         
         this.drawPlayers(
             svg,
             this.getTeamAligmentWithPlayers(playerPositionById, players),
+            tshirtBlueImgUrl,
+            tshirtBlueDarkImgUrl,
             homePlayerXCoord,
             homePlayerYCoord
         );
     }
 
-    drawAwaysPlayers(svg) {
+    drawAwaysPlayers(svg, awayTeam) {
         const { homePlayerXCoord, homePlayerYCoord } = this.getAwayPlayerCoordFns(svg);
-        const { playerPositionById, players } = this.props.awayTeam;
+        const { playerPositionById, players } = awayTeam;
 
         this.drawPlayers(
             svg,
             this.getTeamAligmentWithPlayers(playerPositionById, players),
+            tshirtRedImgUrl,
+            tshirtRedDarkImgUrl,
             homePlayerXCoord,
             homePlayerYCoord
         );
@@ -124,7 +135,7 @@ export default class Field2D extends React.Component {
         return { homePlayerXCoord, homePlayerYCoord };
     }
 
-    drawPlayers(svg, players, playerXCoord, playerYCoord) {
+    drawPlayers(svg, players, tShirtUrl, tShirtDarkUrl, playerXCoord, playerYCoord) {
         let playerLabelXCoord = (playerData, i, j) => playerXCoord(playerData, i, j) + this.getRelativeWidth(20);
         let playerLabelYCoord = (playerData, i, j) =>  playerYCoord(playerData, i, j) + this.getRelativeHeight(90);
 
@@ -137,7 +148,7 @@ export default class Field2D extends React.Component {
             .data((idList) => idList)
             .enter()
             .append('image')
-            .attr('xlink:href', (playerData) => playerData.tShirtImgUrl)
+            .attr('xlink:href', playerData => playerData ? tShirtUrl : tShirtDarkUrl)
             .attr({
                 x: playerXCoord,
                 y: playerYCoord,
@@ -147,7 +158,7 @@ export default class Field2D extends React.Component {
                 class: 'SSUI-Field2D-Image',
                 filter: 'url(#dropshadow)'
             })
-            .on('click', (playerData, i, j) => this.props.onPlayerClick(playerData));
+            .on('click', (player, i, j) => this.props.onPlayerClick(player, j ,i));
 
         let tmpBg = homeGroup.selectAll('rect')
             .data(players)
@@ -158,7 +169,7 @@ export default class Field2D extends React.Component {
             .enter();
 
         let tmpTxt = homeGroup.selectAll('text')
-            .data(players)
+            .data(players.filter(player => player))
             .enter()
             .append('g')
             .selectAll('text')
@@ -172,12 +183,12 @@ export default class Field2D extends React.Component {
                 fill: 'rgba(0,0,0,0.75)',
                 x: playerLabelXCoord,
                 y: playerLabelYCoord,
-                width: (playerData) => (playerData.name).length * this.getRelativeWidth(7), // TODO
+                width: (player) => this.getPlayerName(player).length * this.getRelativeWidth(7),
                 height: this.getRelativeHeight(20),
             });
         tmpTxt
             .append('text')
-            .text((playerData) => playerData.name)
+            .text(this.getPlayerName)
             .attr({
                 fill: 'white',
                 x: playerLabelXCoord,
@@ -199,13 +210,13 @@ export default class Field2D extends React.Component {
 
         tmpTxt
             .append('text')
-            .text((playerData) => playerData.tShirtNr)
+            .text(this.getPlayerNumber)
             .attr({
                 fill: 'black',
                 x: playerLabelXCoord,
                 y: playerLabelYCoord,
                 'font-size': this.getRelativeWidth(14),
-                transform: (playerData) => `translate(${this.getRelativeWidth(parseInt(playerData.tShirtNr) < 10 ? -12 : -14)}, ${this.getRelativeHeight(15)})`
+                transform: (player) => `translate(${this.getRelativeWidth(parseInt(this.getPlayerNumber(player)) < 10 ? -12 : -14)}, ${this.getRelativeHeight(15)})`
             });
     }
 
@@ -243,6 +254,14 @@ export default class Field2D extends React.Component {
     }
 
     getPlayerById = (playerId, players) => {
-        return players.find(player => Number(player.id) === Number(playerId));
+        return players.find(player => player.id === playerId);
+    }
+
+    getPlayerName(player) {
+        return player ? player.name : 'Disponible'
+    }
+
+    getPlayerNumber(player) {
+        return player ? player.playerNumber : 0;
     }
 }

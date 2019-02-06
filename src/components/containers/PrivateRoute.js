@@ -10,7 +10,9 @@ export default args => {
       render={props =>
         <AppContext.Consumer>
           {({ isLoggedIn }) => (
-            isLoggedIn ? <Component {...props} /> : <Redirect to={{ pathname: '/login' }} />
+            isLoggedIn
+              ? <Component {...props} />
+              : <Redirect to={{ pathname: '/login', search: `?afterLogin=${window.location.pathname}` }} />
           )}
         </AppContext.Consumer>
       }
