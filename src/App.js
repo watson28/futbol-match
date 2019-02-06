@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import firebaseService from './libs/firebaseService';
 import './App.css';
 
-import AppState from './AppState'
+import AppState from './components/contextProviders/AppState'
+import NotificationProvider from './components/contextProviders/NotificationProvider';
 import Layout from './components/presentationals/Layout';
 import CreateMatch from './components/containers/CreateMatch';
 import WelcomePage from './components/containers/WelcomePage';
@@ -20,11 +21,13 @@ class App extends Component {
   render() {
     return (
       <Router>
-        <AppState>
-          <Layout>
-            {this.renderRoutes()}
-          </Layout>
-        </AppState>
+        <NotificationProvider>
+          <AppState>
+            <Layout>
+              {this.renderRoutes()}
+            </Layout>
+          </AppState>
+        </NotificationProvider>
       </Router>
     )
   }

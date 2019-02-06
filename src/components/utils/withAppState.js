@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppContext } from '../../AppContext';
+import { AppContext } from '../../contexts/AppContext';
 
 export default (Component) => props => (
   <AppContext.Consumer>

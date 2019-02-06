@@ -6,6 +6,7 @@ import Field2D from './Field2D';
 import { getTeamAlingment } from '../../libs/teamFactory';
 import JoinToMatchDialog from '../presentationals/JoinToMatchDialog';
 import withAppState from '../utils/withAppState';
+import withNotification from '../utils/withNotification';
 
 class MatchDetail extends React.Component {
   state = {
@@ -100,17 +101,33 @@ class MatchDetail extends React.Component {
   handleAttenddeChanges(snapshot) {
     this.setAttenddes(snapshot);
     snapshot.docChanges().forEach(change => {
-      if (change.type === "added") {
-        // If added is current user show you have joined message
-        // If added is other user show message user x has joined
+      const message = this.getAttenddeChangeNotificationMsg(change);
+      if (message) {
+        this.props.notifications.addNotification({ message, level: 'success'});
       }
-      if (change.type === "modified") {}
-      if (change.type === "removed") {}
     })
+  }
+
+  getAttenddeChangeNotificationMsg(change) {
+    const matchAttendde = change.doc.data();
+    const currentUserNotification = matchAttendde.attenddeId === this.getUser().uid;
+    if (change.type === "added") {
+      if (currentUserNotification) return 'Genial, te has unido a esta convocatoria';
+      return `${matchAttendde.attenddeName} se ha unido a esta convocatoria`;
+    }
+    if (change.type === "modified") {}
+    if (change.type === "removed") {
+      if (currentUserNotification) return 'Has salido de esta convocatoria'
+      else return `${matchAttendde.attenddeName} ha abandonado esta convocatoria`
+    }
   }
 
   getMatchId() {
     return this.props.match.params.matchId
+  }
+
+  getUser() {
+    return this.props.appState.user;
   }
 
   getHomeTeam() {
@@ -132,8 +149,8 @@ class MatchDetail extends React.Component {
   }
 
   handleJoinRequest = (player, x, y) => {
-    // TODO: cancel if its already joined
-    // TODO: redirect if its not logged in
+    if (this.isAttenddeInMatch() || this.isPositionTaken(x, y)) return;
+    if (!this.props.appState.user) this.props.history.push('/login');
     this.setState({ selectedPosition: [x, y], confirmationDialogOpen: true })
   }
 
@@ -147,7 +164,7 @@ class MatchDetail extends React.Component {
       position: this.state.selectedPosition,
       playerNumber
     }).then(() => {
-      this.setState({ confirmationDialogOpen: false })
+      this.setState({ confirmationDialogOpen: false });
     })
   }
 
@@ -161,10 +178,16 @@ class MatchDetail extends React.Component {
   }
 
   isAttenddeInMatch() {
+    const user  = this.getUser();
+    if (!user) return false;
+    return this.state.matchAttenddes.some(matchAttendde => matchAttendde.attenddeId === user.uid);
+  }
+
+  isPositionTaken (x, y) {
     return this.state.matchAttenddes.some(
-      matchAttendde => matchAttendde.attenddeId === this.props.appState.user.uid
+      ({ position }) => position[0] === x && position[1] === y
     );
   }
 }
 
-export default withAppState(MatchDetail);
+export default withNotification(withAppState(MatchDetail));

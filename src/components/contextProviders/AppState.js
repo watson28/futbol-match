@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppContext } from './AppContext';
+import { AppContext } from '../../contexts/AppContext';
 import firebase from "firebase/app";
 import { withRouter } from 'react-router-dom';
 
