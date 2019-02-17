@@ -89,7 +89,7 @@ function DefaultLayout(props) {
           {({isLoggedIn, logoutUser}) => (
             <Toolbar>
               <Typography variant="h6" color="inherit" noWrap className={classes.toolbarTitle}>
-                <Button href="/">Futbol Match</Button>
+                Futbol Match
               </Typography>
               {isLoggedIn ? <LogoutButton logoutUser={logoutUser} /> : <LoginButton history={history} />}
           </Toolbar>
