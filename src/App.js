@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import firebaseService from './libs/firebaseService';
-import './App.css';
+
+import { MuiPickersUtilsProvider } from 'material-ui-pickers';
+import DateFnsUtils from '@date-io/date-fns';
+import esLocale from 'date-fns/locale/es';
+import customTheme from './customTheme';
 
 import AppState from './components/contextProviders/AppState'
 import NotificationProvider from './components/contextProviders/NotificationProvider';
@@ -13,6 +17,7 @@ import LoginPage from './components/containers/LoginPage';
 import PrivateRoute from './components/containers/PrivateRoute';
 import AnonymousRoute from './components/containers/AnonymousRoute';
 import MatchDetail from './components/containers/MatchDetail';
+import { MuiThemeProvider } from '@material-ui/core';
 
 firebaseService.initialize();
 
@@ -23,9 +28,13 @@ class App extends Component {
       <Router>
         <NotificationProvider>
           <AppState>
+            <MuiThemeProvider theme={customTheme}>
             <Layout>
-              {this.renderRoutes()}
+              <MuiPickersUtilsProvider utils={DateFnsUtils} locale={esLocale}> 
+                {this.renderRoutes()}
+              </MuiPickersUtilsProvider>
             </Layout>
+            </MuiThemeProvider>
           </AppState>
         </NotificationProvider>
       </Router>

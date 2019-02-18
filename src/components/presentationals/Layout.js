@@ -12,11 +12,6 @@ import { AppContext } from '../../contexts/AppContext';
 import { withRouter } from 'react-router-dom';
 
 const styles = theme => ({
-  '@global': {
-    body: {
-      backgroundColor: theme.palette.common.white,
-    },
-  },
   appBar: {
     position: 'relative',
   },
@@ -35,22 +30,7 @@ const styles = theme => ({
   },
   heroContent: {
     maxWidth: 600,
-    margin: '0 auto',
-    padding: `${theme.spacing.unit * 8}px 0 ${theme.spacing.unit * 6}px`,
-  },
-  cardHeader: {
-    backgroundColor: theme.palette.grey[200],
-  },
-  cardPricing: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'baseline',
-    marginBottom: theme.spacing.unit * 2,
-  },
-  cardActions: {
-    [theme.breakpoints.up('sm')]: {
-      paddingBottom: theme.spacing.unit * 2,
-    },
+    margin: '0 auto'
   },
   footer: {
     marginTop: theme.spacing.unit * 8,

@@ -1,23 +1,22 @@
 import React from 'react';
-import { FormControl, Select, MenuItem, InputLabel, Typography, Grid, FormLabel, RadioGroup, FormControlLabel, Radio, Button } from '@material-ui/core';
-import DateFnsUtils from '@date-io/date-fns';
-import { MuiPickersUtilsProvider, TimePicker, DatePicker } from 'material-ui-pickers';
-import esLocale from 'date-fns/locale/es';
+import { Select, MenuItem, InputLabel, Typography, Grid, FormLabel, RadioGroup, FormControlLabel, Radio, Button, FormControl } from '@material-ui/core';
+import { TimePicker, DatePicker } from 'material-ui-pickers';
+import BoxContainer from '../presentationals/BoxContainer';
 
 const TEAM_SIZES = [5, 6, 7, 11];
 
 // TODO: convert this to a functional component
-export default class CreateMatchForm extends React.Component {
+class CreateMatchForm extends React.Component {
 
-  state = { singleTeam: true, teamSize: 7, publicMatch: true, date: new Date() };
+  state = { singleTeam: true, teamSize: 7, publicMatch: true, date: null };
 
   render() {
     return (
-      <React.Fragment>
-        <form autoComplete="false">
-          <Typography variant="h6" gutterBottom>
-            Nueva convocatoria
+      <BoxContainer>
+        <Typography component="h1" variant="h4" align="center" color="textPrimary" gutterBottom>
+          Nueva convocatoria
         </Typography>
+        <form autoComplete="false">
           <Grid container spacing={24}>
             <Grid item xs={12}>
               <FormControl fullWidth>
@@ -27,56 +26,61 @@ export default class CreateMatchForm extends React.Component {
                   onChange={event => this.setState({ teamSize: event.target.value })}
                   inputProps={{ name: 'team-size', id: 'team-size' }}
                 >
-                  {TEAM_SIZES.map(size => <MenuItem key={size} value={size}>{size}</MenuItem>)}
+                  {TEAM_SIZES.map(size => <MenuItem key={size} value={size}>{size} jugadores</MenuItem>)}
                 </Select>
               </FormControl>
+            </Grid>
 
-              <FormControl component="fieldset">
-                <FormLabel> Equipos en el partido</FormLabel>
-                <RadioGroup
-                  name="match-type"
-                  value={this.state.singleTeam ? 'single' : 'multiple'}
-                  onChange={event => this.setState({ singleTeam: event.target.value === 'single' })}
-                >
-                  <FormControlLabel value="single" control={<Radio />} label="convocatoria con unico equipo" />
-                  <FormControlLabel value="multiple" control={<Radio />} label="convocatoria con dos equpos (equipo local y visitante)" />
-                </RadioGroup>
-              </FormControl>
+            <Grid item xs={12} sm={6}>
+              <DatePicker
+                margin="normal"
+                label="Fecha"
+                fullWidth
+                value={this.state.date}
+                onChange={date => this.setState({ date })}
+              />
+            </Grid>
 
-              <FormControl component="fieldset">
-                <FormLabel>Tipo de convocatoria</FormLabel>
-                <RadioGroup
-                  value={this.state.publicMatch ? 'public' : 'private'}
-                  onChange={event => this.setState({ publicMatch: event.target.value === 'public' })}
-                >
-                  <FormControlLabel
-                    value="public"
-                    control={<Radio />}
-                    label="convocatoria publica: cualquier persona puede participar." />
-                  <FormControlLabel
-                    value="private"
-                    control={<Radio />}
-                    label="convocatoria privada: solo las personas que invites pueden participar." />
-                </RadioGroup>
-              </FormControl>
+            <Grid item xs={12} sm={6}>
+              <TimePicker
+                margin="normal"
+                label="Hora"
+                fullWidth
+                value={this.state.date}
+                onChange={date => this.setState({ date })}
+              />
+            </Grid>
 
-              <FormControl>
-                <FormLabel> Fecha y hora</FormLabel>
-                <MuiPickersUtilsProvider utils={DateFnsUtils} locale={esLocale}>
-                  <Grid container justify="space-around">
-                    <DatePicker
-                      margin="normal"
-                      value={this.state.date}
-                      onChange={date => this.setState({ date })}
-                    />
-                    <TimePicker
-                      margin="normal"
-                      value={this.state.date}
-                      onChange={date => this.setState({ date })}
-                    />
-                  </Grid>
-                </MuiPickersUtilsProvider>
-              </FormControl>
+            <Grid item xs={12}>
+              <FormLabel> Equipos en el partido</FormLabel>
+              <RadioGroup
+                name="match-type"
+                value={this.state.singleTeam ? 'single' : 'multiple'}
+                onChange={event => this.setState({ singleTeam: event.target.value === 'single' })}
+              >
+                <FormControlLabel value="single" control={<Radio />} label="convocatoria con unico equipo" />
+                <FormControlLabel value="multiple" control={<Radio />} label="convocatoria con dos equpos (equipo local y visitante)" />
+              </RadioGroup>
+            </Grid>
+
+            <Grid item xs={12}>
+              <FormLabel>Tipo de convocatoria</FormLabel>
+              <RadioGroup
+                value={this.state.publicMatch ? 'public' : 'private'}
+                onChange={event => this.setState({ publicMatch: event.target.value === 'public' })}
+              >
+                <FormControlLabel
+                  value="public"
+                  control={<Radio />}
+                  label="convocatoria publica: cualquier persona puede participar." />
+                <FormControlLabel
+                  value="private"
+                  control={<Radio />}
+                  label="convocatoria privada: solo las personas que invites pueden participar." />
+              </RadioGroup>
+            </Grid>
+
+            <Grid item xs={12}>
               <Button
                 fullWidth
                 variant="contained"
@@ -85,7 +89,9 @@ export default class CreateMatchForm extends React.Component {
             </Grid>
           </Grid>
         </form>
-      </React.Fragment>
+      </BoxContainer>
     );
   }
 }
+
+export default CreateMatchForm;
