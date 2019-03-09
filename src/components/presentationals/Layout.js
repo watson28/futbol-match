@@ -10,6 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import { AppContext } from '../../contexts/AppContext';
 import { withRouter } from 'react-router-dom';
+import AccountMenu from '../containers/AccountMenu';
 
 const styles = theme => ({
   appBar: {
@@ -66,13 +67,13 @@ function DefaultLayout(props) {
       <CssBaseline />
       <AppBar position="static" color="default" className={classes.appBar}>
         <AppContext.Consumer>
-          {({isLoggedIn, logoutUser}) => (
+          {({ isLoggedIn }) => (
             <Toolbar>
               <Typography variant="h6" color="inherit" noWrap className={classes.toolbarTitle}>
                 Futbol Match
               </Typography>
-              {isLoggedIn ? <LogoutButton logoutUser={logoutUser} /> : <LoginButton history={history} />}
-          </Toolbar>
+              {isLoggedIn ? <AccountMenu /> : <LoginButton history={history} />}
+            </Toolbar>
           )}
         </AppContext.Consumer>
       </AppBar>
@@ -106,12 +107,6 @@ function DefaultLayout(props) {
 const LoginButton = ({ history }) => (
   <Button color="primary" variant="outlined" onClick={() => history.push('/login')}>
     Iniciar sesión
-  </Button>
-)
-
-const LogoutButton = ({ logoutUser }) => (
-  <Button color="primary" variant="outlined" onClick={logoutUser}>
-    Cerrar sesión
   </Button>
 )
 

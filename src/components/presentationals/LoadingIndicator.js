@@ -7,12 +7,13 @@ const styles = theme => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    height: '100%'
+    height: '100%',
+    margin: '10px'
   }
 })
 
 const LoadingIndicator =  ({ classes }) => (
-  <div className={classes.appBar}>
+  <div className={classes.root}>
     <CircularProgress />
   </div>
 )
