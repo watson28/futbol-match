@@ -9,7 +9,7 @@ import customTheme from './customTheme';
 
 import AppState from './components/contextProviders/AppState'
 import NotificationProvider from './components/contextProviders/NotificationProvider';
-import Layout from './components/presentationals/Layout';
+import Layout from './components/containers/Layout';
 import CreateMatch from './components/containers/CreateMatch';
 import WelcomePage from './components/containers/WelcomePage';
 import NotFoundPage from './components/containers/NotFoundPage';
@@ -18,6 +18,7 @@ import PrivateRoute from './components/containers/PrivateRoute';
 import AnonymousRoute from './components/containers/AnonymousRoute';
 import MatchDetail from './components/containers/MatchDetail';
 import { MuiThemeProvider } from '@material-ui/core';
+import MyMatches from './components/containers/MyMatches';
 
 firebaseService.initialize();
 
@@ -47,6 +48,7 @@ class App extends Component {
         <Route path="/" exact component={WelcomePage} />
         <Route path="/match/:matchId" component={MatchDetail} />
         <PrivateRoute path="/new-match" component={CreateMatch} />
+        <PrivateRoute path="/my-matches" component={MyMatches} />
         <AnonymousRoute path="/login" component={LoginPage} />
         <Route component={NotFoundPage} />
       </Switch>
