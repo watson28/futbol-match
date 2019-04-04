@@ -7,6 +7,7 @@ import { getTeamAlingment } from '../../libs/teamFactory';
 import JoinToMatchDialog from '../presentationals/JoinToMatchDialog';
 import withAppState from '../utils/withAppState';
 import withNotification from '../utils/withNotification';
+import { joinToMatch, leaveMatch } from '../../libs/services/matchAttenddesService';
 
 class MatchDetail extends React.Component {
   state = {
@@ -72,7 +73,7 @@ class MatchDetail extends React.Component {
   }
 
   fetchMatch(matchId) {
-    return this.db.collection('matchs').doc(matchId).get()
+    return this.db.collection('matches').doc(matchId).get()
       .then(matchSnapshot => this.setState({ match: matchSnapshot.data() }))
   }
 
@@ -155,26 +156,15 @@ class MatchDetail extends React.Component {
   }
 
   handleJoinConfirmation = (playerNumber) => {
-    const { user } = this.props.appState;
-
-    this.db.collection('matchAttenddes').add({
-      attenddeId: user.uid,
-      attenddeName: user.displayName,
-      matchId: this.getMatchId(),
-      position: this.state.selectedPosition,
-      playerNumber
-    }).then(() => {
-      this.setState({ confirmationDialogOpen: false });
-    })
+    joinToMatch(
+      this.props.appState.user,
+      this.getMatchId(),
+      { position: this.state.selectedPosition, playerNumber }
+    ).then(() => this.setState({ confirmationDialogOpen: false }));
   }
 
   handleLeaveMatch = () => {
-    this.db.collection('matchAttenddes')
-    .where('attenddeId', '==', this.props.appState.user.uid)
-    .where('matchId', '==', this.getMatchId())
-    .limit(1)
-    .get()
-    .then(querySnapshot => querySnapshot.docs[0].ref.delete())
+    leaveMatch(this.props.appState.user, this.getMatchId());
   }
 
   isAttenddeInMatch() {

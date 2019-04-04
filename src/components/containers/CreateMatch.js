@@ -12,7 +12,7 @@ class CreateMatch extends React.Component {
 
   handleSubmitForm = ({ teamSize, singleTeam, publicMatch, date }) => {
     const db = firebaseService.getDatabaseRef();
-    db.collection('matchs').add({
+    db.collection('matches').add({
       teamSize,
       singleTeam,
       publicMatch,

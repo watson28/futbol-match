@@ -4,15 +4,14 @@ import firebase from "firebase/app";
 import { withRouter } from 'react-router-dom';
 import WaitFor from '../utils/WaitFor';
 import FirebaseEventListener from '../../libs/FirebaseEventListener';
+import { onAuthChangeSnapshot } from '../../libs/services/authService';
 
 class AppState extends React.Component {
   state = { user: null };
 
   constructor(props) {
     super(props);
-    this.authEventlistener = new FirebaseEventListener(
-      (a, b) => firebase.auth().onAuthStateChanged(a, b)
-    );
+    this.authEventlistener = new FirebaseEventListener(onAuthChangeSnapshot);
   }
 
   componentDidMount() {

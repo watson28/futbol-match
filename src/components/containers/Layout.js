@@ -42,8 +42,8 @@ class Layout extends React.Component {
     return [
       { label: 'Home', onClick: () => this.props.history.push('/') },
       { label: 'Nueva convocatoria', onClick: () => this.props.history.push('/new-match') },
-      { label: 'Cerrar sessión', onClick: () => this.props.appState.logoutUser() },
-      { label: 'Mis convocatorias', onClick: () => this.props.history.push('/my-matches') }
+      { label: 'Mis convocatorias', onClick: () => this.props.history.push('/my-matches') },
+      { label: 'Cerrar sessión', onClick: () => this.props.appState.logoutUser() }
     ];
   }
 
