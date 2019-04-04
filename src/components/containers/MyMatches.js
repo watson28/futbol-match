@@ -18,7 +18,9 @@ class MyMatches extends React.Component {
 
   componentDidMount() {
     this.myMatchesEventListener.onEvent(snapshot => {
-      this.setState({ myMatches: snapshot.docs.map(docSnapshot => docSnapshot.data()) })
+      this.setState({
+        myMatches: snapshot.docs.map(docSnapshot => ({ ...docSnapshot.data(), id: docSnapshot.id }))
+      })
     })
   }
 
@@ -31,14 +33,16 @@ class MyMatches extends React.Component {
               <TableCell>Fecha</TableCell>
               <TableCell>Creada por</TableCell>
               <TableCell>Jugadores</TableCell>
+              <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {this.state.myMatches.map(match => (
-              <TableRow>
+              <TableRow key={match.id}>
                 <TableCell>{match.date.toString()}</TableCell>
                 <TableCell>{match.createdById}</TableCell>
                 <TableCell>{match.teamSize}</TableCell>
+                <TableCell><a href={`/match/${match.id}`}>ir a convocatoria</a></TableCell>
               </TableRow>
             ))}
           </TableBody>

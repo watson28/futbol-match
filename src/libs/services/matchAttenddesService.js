@@ -19,10 +19,10 @@ export const joinToMatch = (user, matchId, data) => {
   });
 };
 
-export const leaveMatch = (user, matchId) => {
+export const leaveMatch = async (user, matchId) => {
   const db = firebaseService.getDatabaseRef();
   const matchDocRef = db.collection('matches').doc(matchId);
-  const matchAttenddeRef = getMatchAttenddeRef(user, matchId);
+  const matchAttenddeRef = await getMatchAttenddeRef(user, matchId);
   return db.runTransaction(transaction => {
     return transaction.get(matchDocRef).then(matchDoc => {
       if (!matchDoc) throw new Error();
@@ -36,10 +36,18 @@ export const leaveMatch = (user, matchId) => {
 };
 
 export const getMatchAttenddeRef = (user, matchId) => {
-  return this.db.collection('matchAttenddes')
-    .where('attendeeId', '==', user.uid)
+  const db = firebaseService.getDatabaseRef();
+  return db.collection('matchAttenddes')
+    .where('attenddeId', '==', user.uid)
     .where('matchId', '==', matchId)
     .limit(1)
     .get()
     .then(querySnapshot => querySnapshot.docs[0].ref);
+};
+
+export const matchAttenddesSnapshot =(matchId) => (onSnapshot, onError) => {
+  const db = firebaseService.getDatabaseRef();
+  db.collection('matchAttenddes')
+      .where('matchId', '==', matchId)
+      .onSnapshot(onSnapshot, onError);
 };

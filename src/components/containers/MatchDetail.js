@@ -7,7 +7,9 @@ import { getTeamAlingment } from '../../libs/teamFactory';
 import JoinToMatchDialog from '../presentationals/JoinToMatchDialog';
 import withAppState from '../utils/withAppState';
 import withNotification from '../utils/withNotification';
-import { joinToMatch, leaveMatch } from '../../libs/services/matchAttenddesService';
+import { joinToMatch, leaveMatch, matchAttenddesSnapshot } from '../../libs/services/matchAttenddesService';
+import FirebaseEventListener from '../../libs/FirebaseEventListener';
+import { matchSnapshot } from '../../libs/services/matchesService';
 
 class MatchDetail extends React.Component {
   state = {
@@ -21,24 +23,32 @@ class MatchDetail extends React.Component {
   constructor(props) {
     super(props);
     this.db = firebaseService.getDatabaseRef();
+    const matchId = this.getMatchId();
+    this.matchEventListener = new FirebaseEventListener(matchSnapshot(matchId));
+    this.matchAttenddesListener = new FirebaseEventListener(matchAttenddesSnapshot(matchId));
   }
 
   componentDidMount() {
-    const matchId = this.getMatchId();
-
-    this.fetchPromise = Promise.all([
-      this.fetchMatch(matchId),
-      this.subscribeAttenddesChanges(matchId)
-    ])
+    this.matchEventListener.onEvent(snapshot => {
+      this.setState({ match: snapshot.data() })
+    });
+    this.matchAttenddesListener.onEvent(snapshot => {
+      if (this.state.attenddesLoaded) this.notifyAttenddesChanges(snapshot);
+      this.setState({
+        matchAttenddes: snapshot.docs.map(docSnapshot => docSnapshot.data()),
+        attenddesLoaded: true
+      });
+    });
   }
 
   componentWillUnmount() {
-    this.unsubscribeAttenddesChanges();
+    this.matchEventListener.unsubscribe();
+    this.matchAttenddesListener.unsubscribe();
   }
 
   render() {
     return (
-      <WaitFor operation={this.fetchPromise}>
+      <WaitFor operation={this.matchEventListener.getInitialEventPromise()}>
         {() => (
           <React.Fragment>
             {this.isAttenddeInMatch() ? this.renderAttenddeMessage() : this.renderJoinMessage()}
@@ -72,35 +82,7 @@ class MatchDetail extends React.Component {
     )
   }
 
-  fetchMatch(matchId) {
-    return this.db.collection('matches').doc(matchId).get()
-      .then(matchSnapshot => this.setState({ match: matchSnapshot.data() }))
-  }
-
-  subscribeAttenddesChanges(matchId) {
-    return new Promise(resolve => {
-      this.unsubscribeAttenddesChanges = this.db.collection('matchAttenddes')
-      .where('matchId', '==', matchId)
-      .onSnapshot(snapshot => {
-        if (!this.state.attenddesLoaded) {
-          this.setAttenddes(snapshot);
-          resolve();
-        } else {
-          this.handleAttenddeChanges(snapshot);
-        }
-      })
-    })
-  }
-
-  setAttenddes(snapshot) {
-    this.setState({
-      matchAttenddes: snapshot.docs.map(docSnapshot => docSnapshot.data()),
-      attenddesLoaded: true
-    });
-  }
-
-  handleAttenddeChanges(snapshot) {
-    this.setAttenddes(snapshot);
+  notifyAttenddesChanges(snapshot) {
     snapshot.docChanges().forEach(change => {
       const message = this.getAttenddeChangeNotificationMsg(change);
       if (message) {
