@@ -24,12 +24,12 @@ class MatchDetail extends React.Component {
     if(newAttenddes.length > 0) {
       newAttenddes
       .map(this.getNewAttenddeMsg)
-      .forEach(message => this.props.notifications.addNotification({ message, level: 'success' }));
+      .forEach(message => this.props.notifications.addNotification(message, 'success'));
     }
     if(removedAttenddes.length > 0) {
       removedAttenddes
       .map(this.getRemovedAttenddeMsg)
-      .forEach(message => this.props.notifications.addNotification({ message, level: 'success' }));
+      .forEach(message => this.props.notifications.addNotification(message, 'warning'));
     }
   }
 

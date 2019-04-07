@@ -24,7 +24,7 @@ export default servicesCall => Component => {
         eventListener.onError(error => {
           if (process.env.NODE_ENV !== 'prod') console.error(error);
           const message = 'An error has occurred while performing the requested operation';
-          this.props.notifications.addNotification({ message, level: 'error'});
+          this.props.notifications.addNotification(message, 'error');
         });
       });
     }
