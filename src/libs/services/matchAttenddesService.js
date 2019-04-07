@@ -47,7 +47,7 @@ export const getMatchAttenddeRef = (user, matchId) => {
 
 export const matchAttenddesSnapshot =(matchId) => (onSnapshot, onError) => {
   const db = firebaseService.getDatabaseRef();
-  db.collection('matchAttenddes')
+  return db.collection('matchAttenddes')
       .where('matchId', '==', matchId)
       .onSnapshot(onSnapshot, onError);
 };
