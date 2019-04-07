@@ -1,9 +1,10 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import { Link } from 'react-router-dom';
+import Container from '../presentationals/Container';
 
 export default () => (
-  <React.Fragment>
+  <Container>
     <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
       Futbol Match
     </Typography>
@@ -12,5 +13,5 @@ export default () => (
       Empieza creando una <Link to="/new-match">nueva convocatoria</Link> para tu proximo partido e invita
       tus amigos.
     </Typography>
-  </React.Fragment >
+  </Container>
 );

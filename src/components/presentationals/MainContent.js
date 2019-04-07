@@ -11,18 +11,13 @@ const styles = theme => ({
       marginLeft: 'auto',
       marginRight: 'auto',
     },
-  },
-  heroContent: {
-    maxWidth: 600,
-    margin: '0 auto'
-  },
+  }
 });
 
 const MainContent = ({ children, classes }) => (
   <main className={classes.layout}>
-    <div className={classes.heroContent}>
-      {children}
-    </div>
+    {children}
+
   </main>
 );
 

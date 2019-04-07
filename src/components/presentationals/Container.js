@@ -1,5 +1,5 @@
 import React from 'react';
-import { Paper, withStyles } from '@material-ui/core';
+import { withStyles } from '@material-ui/core';
 
 const styles = theme => ({
   main: {
@@ -15,21 +15,15 @@ const styles = theme => ({
       marginRight: 'auto',
     }
   },
-  paper: {
-    marginTop: theme.spacing.unit * 8,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
+  content: {
+    marginTop: theme.spacing.unit * 8
   }
 });
 
-const BoxContainer = ({ classes, children, small, className }) => (
+const Container = ({ classes, children, small, className }) => (
   <main className={classes.main + ' ' + (small ? classes.mainSmall: '') + ' ' + className}>
-    <Paper className={classes.paper}>
-      {children}
-    </Paper>
+    <div className={classes.content}>{children}</div>
   </main>
 )
 
-export default withStyles(styles)(BoxContainer)
+export default withStyles(styles)(Container)

@@ -1,9 +1,16 @@
 import React from 'react';
-import { Select, MenuItem, InputLabel, Typography, Grid, FormLabel, RadioGroup, FormControlLabel, Radio, Button, FormControl } from '@material-ui/core';
+import { Select, MenuItem, InputLabel, Typography, Grid, FormLabel, RadioGroup, FormControlLabel, Radio, Button, FormControl, withStyles } from '@material-ui/core';
 import { TimePicker, DatePicker } from 'material-ui-pickers';
 import BoxContainer from '../presentationals/BoxContainer';
 
 const TEAM_SIZES = [5, 6, 7, 11];
+
+const styles = theme => ({
+  root: {
+    maxWidth: '600px',
+    margin: '0 auto'
+  }
+});
 
 // TODO: convert this to a functional component
 class CreateMatchForm extends React.Component {
@@ -12,7 +19,7 @@ class CreateMatchForm extends React.Component {
 
   render() {
     return (
-      <BoxContainer>
+      <BoxContainer className={this.props.classes.root}>
         <Typography component="h1" variant="h4" align="center" color="textPrimary" gutterBottom>
           Nueva convocatoria
         </Typography>
@@ -94,4 +101,4 @@ class CreateMatchForm extends React.Component {
   }
 }
 
-export default CreateMatchForm;
+export default withStyles(styles)(CreateMatchForm);

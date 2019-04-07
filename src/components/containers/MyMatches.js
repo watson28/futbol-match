@@ -7,12 +7,13 @@ import { format } from 'date-fns/esm';
 import esLocale from 'date-fns/locale/es';
 import withFirebaseData from '../utils/withFirebaseData';
 import flowRight from 'lodash/flowRight';
+import Container from '../presentationals/Container';
 
 const matchTableStyles = theme => ({
   paper: {
     width: '100%',
     overflowX: 'auto',
-    marginBottom: '20px'
+    marginBottom: '40px'
   },
   matchLink: {
     verticalAlign: 'middle'
@@ -20,12 +21,12 @@ const matchTableStyles = theme => ({
 });
 
 const MyMatches = (props) => (
-  <React.Fragment>
+  <Container>
     <Typography component="h2" variant="h4" gutterBottom>Proximas convocatorias</Typography>
     <MatchTable matches={props.myMatches} />
     <Typography component="h2" variant="h4" gutterBottom>Convocatorias creadas</Typography>
     <MatchTable matches={props.createdMatches} />
-  </React.Fragment>
+  </Container>
 );
 
 const MatchTable = withStyles(matchTableStyles)(({ classes, matches }) => (

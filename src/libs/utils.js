@@ -3,7 +3,7 @@ export const range = (size, startAt = 0) => {
 }
 
 export const getDataFromFirebaseSnapshot = (snapshot) => {
-  if (snapshot.constructor.name === 'QuerySnapshot') return snapshot.docs.map(getDataSnapshot);
+  if (snapshot.docs) return snapshot.docs.map(getDataSnapshot);
   return getDataSnapshot(snapshot);
 }
 

@@ -25,7 +25,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "NODE_ENV=production npm run build && firebase deploy"
+    "deploy": "NODE_ENV=production npm run build && firebase deploy",
+    "firebase-login": "firebase login"
   },
   "eslintConfig": {
     "extends": "react-app"
