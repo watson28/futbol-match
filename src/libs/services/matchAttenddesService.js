@@ -1,4 +1,6 @@
 import firebaseService from "../firebaseService";
+import flowRight from 'lodash/flowRight';
+import { getDataFromFirebaseSnapshot } from "../utils";
 
 export const joinToMatch = (user, matchId, data) => {
   const db = firebaseService.getDatabaseRef();
@@ -49,5 +51,5 @@ export const matchAttenddesSnapshot =(matchId) => (onSnapshot, onError) => {
   const db = firebaseService.getDatabaseRef();
   return db.collection('matchAttenddes')
       .where('matchId', '==', matchId)
-      .onSnapshot(onSnapshot, onError);
+      .onSnapshot(flowRight(onSnapshot, getDataFromFirebaseSnapshot), onError);
 };

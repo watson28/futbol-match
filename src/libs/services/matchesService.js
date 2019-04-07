@@ -18,5 +18,7 @@ export const matchesByCreatorSnapshot = (createdById) => (onSnapshot, onError) =
 
 export const matchSnapshot = (matchId) => (onSnapshot, onError) => {
   const db = firebaseService.getDatabaseRef();
-  return db.collection('matches').doc(matchId).onSnapshot(onSnapshot, onError);
+  return db.collection('matches')
+    .doc(matchId)
+    .onSnapshot(flowRight(onSnapshot, getDataFromFirebaseSnapshot), onError);
 };

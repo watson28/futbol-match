@@ -10,7 +10,7 @@ export default class WaitFor extends React.Component {
   }
 
   static defaultProps = {
-    operation: new Promise(() => {}),// TODO: Refactor this to avoid default promise value.
+    operation: Promise.resolve(),
     fallback: <LoadingIndicator />
   }
 
